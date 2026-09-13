@@ -35,6 +35,19 @@ app.get("/api/students/:id",(req,res)=>{
     res.json(student);
 });
 
+app.get("/api/students/:id", (req, res) => {
+    const id = Number(req.params.id);
+
+    const student = students.find(student => student.id === id);
+
+    if (!student) {
+        return res.status(404).json({
+            message: "Student not found"
+        });
+    }
+
+    return res.json(student);
+});
 
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
