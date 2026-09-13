@@ -49,6 +49,20 @@ app.get("/api/students/:id", (req, res) => {
     return res.json(student);
 });
 
+app.get("/api/students", (req, res) => {
+    const course = req.query.course;
+
+    if (course) {
+        const filteredStudents = students.filter(
+            student => student.course === course
+        );
+
+        return res.json(filteredStudents);
+    }
+
+    return res.json(students);
+});
+
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
