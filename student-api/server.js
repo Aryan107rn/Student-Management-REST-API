@@ -5,6 +5,7 @@ const app = express();
 
 const PORT = 8000;
 
+// Middleware
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -12,29 +13,27 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get("/api/students", (req, res) => {
-    res.json(students);
-});
-
+// Home route
 app.get("/", (req, res) => {
     res.send("Student Management API is running");
 });
 
-app.post("/api/students", (req, res) => {
-    console.log(req.body);
-    res.json(req.body);
+// Get students / filter by course
+app.get("/api/students", (req, res) => {
+    const course = req.query.course;
+
+    if (course) {
+        const filteredStudents = students.filter(
+            student => student.course === course
+        );
+
+        return res.json(filteredStudents);
+    }
+
+    return res.json(students);
 });
 
-app.get("/api/students/:id",(req,res)=>{
-    console.log(req.params);
-
-    console.log=Number(req.params.id);
-
-    const student = students.find(student => student.id === id);
-
-    res.json(student);
-});
-
+// Get student by ID
 app.get("/api/students/:id", (req, res) => {
     const id = Number(req.params.id);
 
@@ -49,18 +48,13 @@ app.get("/api/students/:id", (req, res) => {
     return res.json(student);
 });
 
-app.get("/api/students", (req, res) => {
-    const course = req.query.course;
+// Create student
+app.post("/api/students", (req, res) => {
+    const student = req.body;
 
-    if (course) {
-        const filteredStudents = students.filter(
-            student => student.course === course
-        );
+    students.push(student);
 
-        return res.json(filteredStudents);
-    }
-
-    return res.json(students);
+    return res.status(201).json(student);
 });
 
 app.listen(PORT, () => {
