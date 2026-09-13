@@ -25,6 +25,17 @@ app.post("/api/students", (req, res) => {
     res.json(req.body);
 });
 
+app.get("/api/students/:id",(req,res)=>{
+    console.log(req.params);
+
+    console.log=Number(req.params.id);
+
+    const student = students.find(student => student.id === id);
+
+    res.json(student);
+});
+
+
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
