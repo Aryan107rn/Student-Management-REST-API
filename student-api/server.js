@@ -50,13 +50,25 @@ app.get("/api/students/:id", (req, res) => {
 
 // Create student
 app.post("/api/students", (req, res) => {
-    const student = req.body;
+    const { name, age, course } = req.body;
+
+    if (!name || !age || !course) {
+        return res.status(400).json({
+            message: "name, age and course are required"
+        });
+    }
+
+    const student = {
+        id: students.length + 1,
+        name,
+        age,
+        course
+    };
 
     students.push(student);
 
     return res.status(201).json(student);
 });
-
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
