@@ -96,6 +96,26 @@ app.put("/api/students/:id", (req, res) => {
     return res.json(student);
 });
 
+app.patch("/api/students/:id", (req, res) => {
+    const id = Number(req.params.id);
+
+    const student = students.find(student => student.id === id);
+
+    if (!student) {
+        return res.status(404).json({
+            message: "Student not found"
+        });
+    }
+
+    const { name, age, course } = req.body;
+
+    if (name !== undefined) student.name = name;
+    if (age !== undefined) student.age = age;
+    if (course !== undefined) student.course = course;
+
+    return res.json(student);
+});
+
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
