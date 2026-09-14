@@ -116,6 +116,25 @@ app.patch("/api/students/:id", (req, res) => {
     return res.json(student);
 });
 
+app.delete("/api/students/:id", (req, res) => {
+    const id = Number(req.params.id);
+
+    const index = students.findIndex(student => student.id === id);
+
+    if (index === -1) {
+        return res.status(404).json({
+            message: "Student not found"
+        });
+    }
+
+    const deletedStudent = students.splice(index, 1);
+
+    return res.json({
+        message: "Student deleted successfully",
+        student: deletedStudent[0]
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
