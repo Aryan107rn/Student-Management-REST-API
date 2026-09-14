@@ -93,6 +93,17 @@ app.route("/api/students/:id")
         });
     });
 
+    const validateStudent = (req, res, next) => {
+    const { name, age, course } = req.body;
+
+    if (!name || !age || !course) {
+        return res.status(400).json({
+            message: "name, age and course are required"
+        });
+    }
+
+    next();
+};
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
