@@ -7,7 +7,7 @@ const PORT = 8000;
 
 // ==================== MIDDLEWARE ====================
 
-// Parse JSON request bodies
+// Parse JSON request body
 app.use(express.json());
 
 // Logger middleware
@@ -16,8 +16,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// ==================== VALIDATION MIDDLEWARE ====================
-
+// Student validation middleware
 const validateStudent = (req, res, next) => {
     const { name, age, course } = req.body;
 
@@ -64,10 +63,10 @@ app.post("/api/students", validateStudent, (req, res) => {
     return res.status(201).json(student);
 });
 
-// Get / Update / Delete student by ID
+// Routes for a specific student
 app.route("/api/students/:id")
 
-    // GET ONE STUDENT
+    // GET student
     .get((req, res) => {
         const id = Number(req.params.id);
 
@@ -84,7 +83,7 @@ app.route("/api/students/:id")
         return res.json(student);
     })
 
-    // PUT - Replace student
+    // PUT student
     .put(validateStudent, (req, res) => {
         const id = Number(req.params.id);
 
@@ -107,7 +106,7 @@ app.route("/api/students/:id")
         return res.json(student);
     })
 
-    // PATCH - Partial update
+    // PATCH student
     .patch((req, res) => {
         const id = Number(req.params.id);
 
@@ -138,7 +137,7 @@ app.route("/api/students/:id")
         return res.json(student);
     })
 
-    // DELETE
+    // DELETE student
     .delete((req, res) => {
         const id = Number(req.params.id);
 
@@ -159,6 +158,22 @@ app.route("/api/students/:id")
             student: deletedStudent[0]
         });
     });
+
+// ==================== TEST ERROR ====================
+
+app.get("/error", (req, res, next) => {
+    next(new Error("Something went wrong"));
+});
+
+// ==================== ERROR HANDLING ====================
+
+app.use((err, req, res, next) => {
+    console.error(err);
+
+    return res.status(500).json({
+        message: "Internal Server Error"
+    });
+});
 
 // ==================== SERVER ====================
 
