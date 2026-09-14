@@ -13,127 +13,85 @@ app.use((req, res, next) => {
     next();
 });
 
-// Home route
-app.get("/", (req, res) => {
-    res.send("Student Management API is running");
-});
+app.route("/api/students/:id")
+    .get((req, res) => {
+        const id = Number(req.params.id);
 
-// Get students / filter by course
-app.get("/api/students", (req, res) => {
-    const course = req.query.course;
+        const student = students.find(student => student.id === id);
 
-    if (course) {
-        const filteredStudents = students.filter(
-            student => student.course === course
-        );
+        if (!student) {
+            return res.status(404).json({
+                message: "Student not found"
+            });
+        }
 
-        return res.json(filteredStudents);
-    }
+        return res.json(student);
+    })
 
-    return res.json(students);
-});
+    .put((req, res) => {
+        const id = Number(req.params.id);
 
-// Get student by ID
-app.get("/api/students/:id", (req, res) => {
-    const id = Number(req.params.id);
+        const student = students.find(student => student.id === id);
 
-    const student = students.find(student => student.id === id);
+        if (!student) {
+            return res.status(404).json({
+                message: "Student not found"
+            });
+        }
 
-    if (!student) {
-        return res.status(404).json({
-            message: "Student not found"
+        const { name, age, course } = req.body;
+
+        if (!name || !age || !course) {
+            return res.status(400).json({
+                message: "name, age and course are required"
+            });
+        }
+
+        student.name = name;
+        student.age = age;
+        student.course = course;
+
+        return res.json(student);
+    })
+
+    .patch((req, res) => {
+        const id = Number(req.params.id);
+
+        const student = students.find(student => student.id === id);
+
+        if (!student) {
+            return res.status(404).json({
+                message: "Student not found"
+            });
+        }
+
+        const { name, age, course } = req.body;
+
+        if (name !== undefined) student.name = name;
+        if (age !== undefined) student.age = age;
+        if (course !== undefined) student.course = course;
+
+        return res.json(student);
+    })
+
+    .delete((req, res) => {
+        const id = Number(req.params.id);
+
+        const index = students.findIndex(student => student.id === id);
+
+        if (index === -1) {
+            return res.status(404).json({
+                message: "Student not found"
+            });
+        }
+
+        const deletedStudent = students.splice(index, 1);
+
+        return res.json({
+            message: "Student deleted successfully",
+            student: deletedStudent[0]
         });
-    }
-
-    return res.json(student);
-});
-
-// Create student
-app.post("/api/students", (req, res) => {
-    const { name, age, course } = req.body;
-
-    if (!name || !age || !course) {
-        return res.status(400).json({
-            message: "name, age and course are required"
-        });
-    }
-
-    const student = {
-        id: students.length + 1,
-        name,
-        age,
-        course
-    };
-
-    students.push(student);
-
-    return res.status(201).json(student);
-});
-
-app.put("/api/students/:id", (req, res) => {
-    const id = Number(req.params.id);
-
-    const student = students.find(student => student.id === id);
-
-    if (!student) {
-        return res.status(404).json({
-            message: "Student not found"
-        });
-    }
-
-    const { name, age, course } = req.body;
-
-    if (!name || !age || !course) {
-        return res.status(400).json({
-            message: "name, age and course are required"
-        });
-    }
-
-    student.name = name;
-    student.age = age;
-    student.course = course;
-
-    return res.json(student);
-});
-
-app.patch("/api/students/:id", (req, res) => {
-    const id = Number(req.params.id);
-
-    const student = students.find(student => student.id === id);
-
-    if (!student) {
-        return res.status(404).json({
-            message: "Student not found"
-        });
-    }
-
-    const { name, age, course } = req.body;
-
-    if (name !== undefined) student.name = name;
-    if (age !== undefined) student.age = age;
-    if (course !== undefined) student.course = course;
-
-    return res.json(student);
-});
-
-app.delete("/api/students/:id", (req, res) => {
-    const id = Number(req.params.id);
-
-    const index = students.findIndex(student => student.id === id);
-
-    if (index === -1) {
-        return res.status(404).json({
-            message: "Student not found"
-        });
-    }
-
-    const deletedStudent = students.splice(index, 1);
-
-    return res.json({
-        message: "Student deleted successfully",
-        student: deletedStudent[0]
     });
-});
 
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
