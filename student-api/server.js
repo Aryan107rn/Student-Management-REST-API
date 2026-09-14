@@ -69,6 +69,33 @@ app.post("/api/students", (req, res) => {
 
     return res.status(201).json(student);
 });
+
+app.put("/api/students/:id", (req, res) => {
+    const id = Number(req.params.id);
+
+    const student = students.find(student => student.id === id);
+
+    if (!student) {
+        return res.status(404).json({
+            message: "Student not found"
+        });
+    }
+
+    const { name, age, course } = req.body;
+
+    if (!name || !age || !course) {
+        return res.status(400).json({
+            message: "name, age and course are required"
+        });
+    }
+
+    student.name = name;
+    student.age = age;
+    student.course = course;
+
+    return res.json(student);
+});
+
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
